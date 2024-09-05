@@ -5,7 +5,7 @@ from .models import Employee_card_creation
 @admin.register(Employee_card_creation)
 class EmployeeCardCreationAdmin(admin.ModelAdmin):
     list_display = (
-        'complete_name', 'age', 'marital_status', 'rg', 'cpf', 'display_address',
+        'complete_name', 'date_of_birth', 'marital_status', 'rg', 'cpf', 'display_address',
         'phone', 'phone2', 'email', 'job_title', 'salary', 'admission_date', 'employment_type'
     )
     search_fields = ('complete_name', 'cpf', 'email')
