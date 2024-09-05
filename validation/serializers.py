@@ -1,6 +1,9 @@
 from rest_framework import serializers
 import re
+from datetime import datetime
 from validation.models import Employee_card_creation
+from django.core.exceptions import ValidationError
+
 
 # Aqui estou validando o CPF com um padrão regex e a formula de validação do CPF
 def authenticate_cpf(cpf):
@@ -47,4 +50,23 @@ class Employee_cardSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("E-mail Inválido!")
         return value
     
-    
+    def validate(self, data):
+        # Formatar e validar a data de nascimento
+        date_of_birth_str = data.get('date_of_birth', '')
+        if date_of_birth_str and isinstance(date_of_birth_str, str):
+            data['date_of_birth'] = self.format_date(date_of_birth_str, 'date_of_birth')
+
+        # Formatar e validar a data de admissão
+        admission_date_str = data.get('admission_date', '')
+        if admission_date_str and isinstance(admission_date_str, str):
+              data['admission_date'] = self.format_date(admission_date_str, 'admission_date')
+
+        return data
+        
+    def format_date(self, date_str, field_name):
+      try:
+          date_obj = datetime.strptime(date_str, '%d/%m/%Y').date()
+          return date_obj
+      except ValueError:
+          raise ValidationError(f'Data inválida. O campo {field_name} deve ser no formato DD/MM/YYYY.')
+      
