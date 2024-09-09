@@ -4,23 +4,48 @@ import re
 from django.db import models
 from datetime import datetime
 
-
-marital_status_choices = (
-    ('solteiro(a)', 'Solteiro(a)'),
-    ('casado(a)', 'Casado(a)'),
-    ('divorciado(a)', 'Divorciado(a)'),
-    ('viuvo(a)', 'Viúvo(a)'),
+NATIONALITY_CHOICES = (
+    ('BRA', 'Brasileira'),
+    ('ARG', 'Argentina'),
+    ('URU', 'Uruguaia'),
+    ('PAR', 'Paraguaia'),
+    ('VEN', 'Venezuelana'),
+    ('COL', 'Colombiana'),
+    ('PER', 'Peruana'),
+    ('CHI', 'Chilena'),
+    ('EQU', 'Equatoriana'),
+    ('BOL', 'Boliviana'),
+    ('EUA', 'Americana'),
+    ('POR', 'Portuguesa'),
+    ('ESP', 'Espanhola'),
+    ('FRA', 'Francesa'),
+    ('ITA', 'Italiana'),
+    ('ALE', 'Alemã'),
+    ('ING', 'Inglesa'),
+)
+MARITAL_STATUS_CHOICES = (
+    ('solteiro', 'Solteiro(a)'),
+    ('casado', 'Casado(a)'),
+    ('divorciado', 'Divorciado(a)'),
+    ('viuvo', 'Viúvo(a)'),
     ('uniao_estavel', 'União Estável'),
 )
 class Employee_card_creation(models.Model):
     complete_name = models.CharField(max_length=300)
     date_of_birth = models.DateField(default=datetime.now)
+    nationality = models.CharField(
+        max_length=100,
+        default='Brasileira',
+        choices=NATIONALITY_CHOICES
+    )
     marital_status = models.CharField(
         max_length=20,
-        choices=marital_status_choices
+        choices=MARITAL_STATUS_CHOICES
         )
     rg = models.CharField(max_length=20)
     cpf = models.CharField(max_length=20, unique=True)
+    mother_name = models.CharField(max_length=300, default='N/A')
+    father_name = models.CharField(max_length=300, null=False, default='N/A')
     address = models.JSONField()
     phone = models.CharField(max_length=20)
     phone2 = models.CharField(max_length=20, blank=True, null=True)
@@ -28,6 +53,7 @@ class Employee_card_creation(models.Model):
     job_title = models.CharField(max_length=50)
     salary = models.DecimalField(max_digits=10, decimal_places=2)
     admission_date = models.DateField()
+    pis = models.CharField(max_length=20, unique=True, null=True, blank=True)
     employment_type = models.CharField(max_length=20)
 
 
@@ -54,9 +80,12 @@ class Employee_card_creation(models.Model):
         return {
             "complete_name": self.complete_name,
             "date_of_birth": self.date_of_birth.strftime('%d/%m/%Y') if self.date_of_birth else '',
+            "nationality": self.nationality,
             "marital_status": self.marital_status,
             "rg": self.rg,
             "cpf": self.cpf,
+            "mother_name": self.mother_name,
+            "father_name": self.father_name,
             "address": {
                 "street": self.address.get('street', ''),
                 "number": self.address.get('number', ''),
@@ -72,6 +101,7 @@ class Employee_card_creation(models.Model):
             "job_title": self.job_title,
             "salary": str(self.salary),
             "admission_date": self.admission_date.strftime('%d/%m/%Y') if self.admission_date else '',
+            "pis": self.pis,
             "employment_type": self.employment_type,
         }
 
