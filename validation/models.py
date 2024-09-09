@@ -4,10 +4,21 @@ import re
 from django.db import models
 from datetime import datetime
 
+
+marital_status_choices = (
+    ('solteiro(a)', 'Solteiro(a)'),
+    ('casado(a)', 'Casado(a)'),
+    ('divorciado(a)', 'Divorciado(a)'),
+    ('viuvo(a)', 'Viúvo(a)'),
+    ('uniao_estavel', 'União Estável'),
+)
 class Employee_card_creation(models.Model):
     complete_name = models.CharField(max_length=300)
     date_of_birth = models.DateField(default=datetime.now)
-    marital_status = models.CharField(max_length=20)
+    marital_status = models.CharField(
+        max_length=20,
+        choices=marital_status_choices
+        )
     rg = models.CharField(max_length=20)
     cpf = models.CharField(max_length=20, unique=True)
     address = models.JSONField()

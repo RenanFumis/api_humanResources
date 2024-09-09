@@ -19,9 +19,6 @@ def authenticate_cpf(cpf):
                 return False
         return True
 
-# Aqui estou validando o estado civil com termos pré-definidos
-def authenticate_marital_status(estado_civil):
-        return estado_civil.lower() in ['solteiro(a)', 'casado(a)', 'divorciado(a)', 'viuvo(a)', 'uniao_estavel']
 
 # Aqui estou validando o email com um padrão regex
 def authenticate_email(email):
@@ -40,10 +37,6 @@ class Employee_cardSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("CPF Inválido!")
         return value
     
-    def validate_marital_status(self, value):
-        if not authenticate_marital_status(value):
-            raise serializers.ValidationError("Estado Civil Inválido, escolha entre: solteiro(a), casado(a), divorciado(a), viuvo(a), uniao_estavel")
-        return value
     
     def validate_email(self, value):
         if not authenticate_email(value):
@@ -59,14 +52,14 @@ class Employee_cardSerializer(serializers.ModelSerializer):
         # Formatar e validar a data de admissão
         admission_date_str = data.get('admission_date', '')
         if admission_date_str and isinstance(admission_date_str, str):
-              data['admission_date'] = self.format_date(admission_date_str, 'admission_date')
+            data['admission_date'] = self.format_date(admission_date_str, 'admission_date')
 
         return data
         
     def format_date(self, date_str, field_name):
-      try:
-          date_obj = datetime.strptime(date_str, '%d/%m/%Y').date()
-          return date_obj
-      except ValueError:
-          raise ValidationError(f'Data inválida. O campo {field_name} deve ser no formato DD/MM/YYYY.')
-      
+        try:
+            date_obj = datetime.strptime(date_str, '%d/%m/%Y').date()
+            return date_obj
+        except ValueError:
+            raise ValidationError(f'Data inválida. O campo {field_name} deve ser no formato DD/MM/YYYY.')
+
