@@ -24,29 +24,24 @@ def authenticate_email(email):
         email_padrao = re.compile(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
         return re.fullmatch(email_padrao, email) is not None
 
-def valida_nit_nb(valor):
+def autehenticate_pis(value):
         
         # Converte para string e remove caracteres não numéricos
-        valor = re.sub('[^0-9]', '', str(valor))
-        
+        value = re.sub('[^0-9]', '', str(value))
         # Verifica se o tamanho é adequado e ajusta se necessário
-        if len(valor) > 11:
+        if len(value) > 11:
             return False  # Mais de 11 dígitos não são válidos
-        elif len(valor) < 11:
-            valor = valor.zfill(11)  # Adiciona zeros à esquerda se menos de 11 dígitos
-        
+        elif len(value) < 11:
+            value = value.zfill(11)  # Adiciona zeros à esquerda se menos de 11 dígitos
         # Prepara os pesos para o cálculo do dígito verificador
-        pesos = [3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
-        
+        counts = [3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
         # Calcula a soma dos produtos dos dígitos pelos pesos
-        total = sum(int(digito) * peso for digito, peso in zip(valor, pesos))
-        
+        total = sum(int(digit) * count for digit, count in zip(value, counts))
         # Calcula o dígito verificador
-        resto = total % 11
-        dv = 0 if resto < 2 else 11 - resto
-        
+        remainder = total % 11
+        dv = 0 if remainder < 2 else 11 - remainder
         # Compara o dígito verificador calculado com o último dígito do valor
-        return dv == int(valor[-1])
+        return dv == int(value[-1])
 
 class Employee_cardSerializer(serializers.ModelSerializer):
 
@@ -86,6 +81,6 @@ class Employee_cardSerializer(serializers.ModelSerializer):
             raise ValidationError(f'Data inválida. O campo {field_name} deve ser no formato DD/MM/YYYY.')
 
     def validate_pis(self, value):
-        if not valida_nit_nb(value):
+        if not autehenticate_pis(value):
             raise serializers.ValidationError("PIS Inválido!")
         return value
